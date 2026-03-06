@@ -1,9 +1,9 @@
 import Testing
 import Foundation
-@testable import iOS
+@testable import BearClaw
 
 @Suite(.serialized)
-struct iOSTests {
+struct BearClawTests {
     @Test func actionResultPreservesPayload() {
         let result = AgentActionResult(action: "lock_doors", success: true, summary: "Doors locked")
         #expect(result.action == "lock_doors")

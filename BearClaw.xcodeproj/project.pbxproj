@@ -12,37 +12,37 @@
 			containerPortal = 60C023A72F5B6EF700D702F9 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 60C023AE2F5B6EF700D702F9;
-			remoteInfo = iOS;
+			remoteInfo = BearClaw;
 		};
 		60C023C72F5B6EF800D702F9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 60C023A72F5B6EF700D702F9 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 60C023AE2F5B6EF700D702F9;
-			remoteInfo = iOS;
+			remoteInfo = BearClaw;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		60C023AF2F5B6EF700D702F9 /* iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		60C023BC2F5B6EF800D702F9 /* iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		60C023C62F5B6EF800D702F9 /* iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		60C023AF2F5B6EF700D702F9 /* BearClaw.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BearClaw.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		60C023BC2F5B6EF800D702F9 /* BearClawTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BearClawTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		60C023C62F5B6EF800D702F9 /* BearClawUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BearClawUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		60C023B12F5B6EF700D702F9 /* iOS */ = {
+		60C023B12F5B6EF700D702F9 /* BearClaw */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = iOS;
+			path = BearClaw;
 			sourceTree = "<group>";
 		};
-		60C023BF2F5B6EF800D702F9 /* iOSTests */ = {
+		60C023BF2F5B6EF800D702F9 /* BearClawTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = iOSTests;
+			path = BearClawTests;
 			sourceTree = "<group>";
 		};
-		60C023C92F5B6EF800D702F9 /* iOSUITests */ = {
+		60C023C92F5B6EF800D702F9 /* BearClawUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = iOSUITests;
+			path = BearClawUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +75,9 @@
 		60C023A62F5B6EF700D702F9 = {
 			isa = PBXGroup;
 			children = (
-				60C023B12F5B6EF700D702F9 /* iOS */,
-				60C023BF2F5B6EF800D702F9 /* iOSTests */,
-				60C023C92F5B6EF800D702F9 /* iOSUITests */,
+				60C023B12F5B6EF700D702F9 /* BearClaw */,
+				60C023BF2F5B6EF800D702F9 /* BearClawTests */,
+				60C023C92F5B6EF800D702F9 /* BearClawUITests */,
 				60C023B02F5B6EF700D702F9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,9 +85,9 @@
 		60C023B02F5B6EF700D702F9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				60C023AF2F5B6EF700D702F9 /* iOS.app */,
-				60C023BC2F5B6EF800D702F9 /* iOSTests.xctest */,
-				60C023C62F5B6EF800D702F9 /* iOSUITests.xctest */,
+				60C023AF2F5B6EF700D702F9 /* BearClaw.app */,
+				60C023BC2F5B6EF800D702F9 /* BearClawTests.xctest */,
+				60C023C62F5B6EF800D702F9 /* BearClawUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		60C023AE2F5B6EF700D702F9 /* iOS */ = {
+		60C023AE2F5B6EF700D702F9 /* BearClaw */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 60C023D02F5B6EF800D702F9 /* Build configuration list for PBXNativeTarget "iOS" */;
+			buildConfigurationList = 60C023D02F5B6EF800D702F9 /* Build configuration list for PBXNativeTarget "BearClaw" */;
 			buildPhases = (
 				60C023AB2F5B6EF700D702F9 /* Sources */,
 				60C023AC2F5B6EF700D702F9 /* Frameworks */,
@@ -108,18 +108,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				60C023B12F5B6EF700D702F9 /* iOS */,
+				60C023B12F5B6EF700D702F9 /* BearClaw */,
 			);
-			name = iOS;
+			name = BearClaw;
 			packageProductDependencies = (
 			);
-			productName = iOS;
-			productReference = 60C023AF2F5B6EF700D702F9 /* iOS.app */;
+			productName = BearClaw;
+			productReference = 60C023AF2F5B6EF700D702F9 /* BearClaw.app */;
 			productType = "com.apple.product-type.application";
 		};
-		60C023BB2F5B6EF800D702F9 /* iOSTests */ = {
+		60C023BB2F5B6EF800D702F9 /* BearClawTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 60C023D32F5B6EF800D702F9 /* Build configuration list for PBXNativeTarget "iOSTests" */;
+			buildConfigurationList = 60C023D32F5B6EF800D702F9 /* Build configuration list for PBXNativeTarget "BearClawTests" */;
 			buildPhases = (
 				60C023B82F5B6EF800D702F9 /* Sources */,
 				60C023B92F5B6EF800D702F9 /* Frameworks */,
@@ -131,18 +131,18 @@
 				60C023BE2F5B6EF800D702F9 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				60C023BF2F5B6EF800D702F9 /* iOSTests */,
+				60C023BF2F5B6EF800D702F9 /* BearClawTests */,
 			);
-			name = iOSTests;
+			name = BearClawTests;
 			packageProductDependencies = (
 			);
-			productName = iOSTests;
-			productReference = 60C023BC2F5B6EF800D702F9 /* iOSTests.xctest */;
+			productName = BearClawTests;
+			productReference = 60C023BC2F5B6EF800D702F9 /* BearClawTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		60C023C52F5B6EF800D702F9 /* iOSUITests */ = {
+		60C023C52F5B6EF800D702F9 /* BearClawUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 60C023D62F5B6EF800D702F9 /* Build configuration list for PBXNativeTarget "iOSUITests" */;
+			buildConfigurationList = 60C023D62F5B6EF800D702F9 /* Build configuration list for PBXNativeTarget "BearClawUITests" */;
 			buildPhases = (
 				60C023C22F5B6EF800D702F9 /* Sources */,
 				60C023C32F5B6EF800D702F9 /* Frameworks */,
@@ -154,13 +154,13 @@
 				60C023C82F5B6EF800D702F9 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				60C023C92F5B6EF800D702F9 /* iOSUITests */,
+				60C023C92F5B6EF800D702F9 /* BearClawUITests */,
 			);
-			name = iOSUITests;
+			name = BearClawUITests;
 			packageProductDependencies = (
 			);
-			productName = iOSUITests;
-			productReference = 60C023C62F5B6EF800D702F9 /* iOSUITests.xctest */;
+			productName = BearClawUITests;
+			productReference = 60C023C62F5B6EF800D702F9 /* BearClawUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 60C023AA2F5B6EF700D702F9 /* Build configuration list for PBXProject "iOS" */;
+			buildConfigurationList = 60C023AA2F5B6EF700D702F9 /* Build configuration list for PBXProject "BearClaw" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				60C023AE2F5B6EF700D702F9 /* iOS */,
-				60C023BB2F5B6EF800D702F9 /* iOSTests */,
-				60C023C52F5B6EF800D702F9 /* iOSUITests */,
+				60C023AE2F5B6EF700D702F9 /* BearClaw */,
+				60C023BB2F5B6EF800D702F9 /* BearClawTests */,
+				60C023C52F5B6EF800D702F9 /* BearClawUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		60C023BE2F5B6EF800D702F9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 60C023AE2F5B6EF700D702F9 /* iOS */;
+			target = 60C023AE2F5B6EF700D702F9 /* BearClaw */;
 			targetProxy = 60C023BD2F5B6EF800D702F9 /* PBXContainerItemProxy */;
 		};
 		60C023C82F5B6EF800D702F9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 60C023AE2F5B6EF700D702F9 /* iOS */;
+			target = 60C023AE2F5B6EF700D702F9 /* BearClaw */;
 			targetProxy = 60C023C72F5B6EF800D702F9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -407,7 +407,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.barelabs.iphone.iOS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.barelabs.iphone.BearClaw;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -438,7 +438,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.barelabs.iphone.iOS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.barelabs.iphone.BearClaw;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -459,7 +459,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.barelabs.iphone.iOSTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.barelabs.iphone.BearClawTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -467,7 +467,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/iOS";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BearClaw.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BearClaw";
 			};
 			name = Debug;
 		};
@@ -480,7 +480,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.barelabs.iphone.iOSTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.barelabs.iphone.BearClawTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -488,7 +488,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/iOS";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BearClaw.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BearClaw";
 			};
 			name = Release;
 		};
@@ -499,7 +499,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.barelabs.iphone.iOSUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.barelabs.iphone.BearClawUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -507,7 +507,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = iOS;
+				TEST_TARGET_NAME = BearClaw;
 			};
 			name = Debug;
 		};
@@ -518,7 +518,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.barelabs.iphone.iOSUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.barelabs.iphone.BearClawUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -526,14 +526,14 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = iOS;
+				TEST_TARGET_NAME = BearClaw;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		60C023AA2F5B6EF700D702F9 /* Build configuration list for PBXProject "iOS" */ = {
+		60C023AA2F5B6EF700D702F9 /* Build configuration list for PBXProject "BearClaw" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				60C023CE2F5B6EF800D702F9 /* Debug */,
@@ -542,7 +542,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		60C023D02F5B6EF800D702F9 /* Build configuration list for PBXNativeTarget "iOS" */ = {
+		60C023D02F5B6EF800D702F9 /* Build configuration list for PBXNativeTarget "BearClaw" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				60C023D12F5B6EF800D702F9 /* Debug */,
@@ -551,7 +551,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		60C023D32F5B6EF800D702F9 /* Build configuration list for PBXNativeTarget "iOSTests" */ = {
+		60C023D32F5B6EF800D702F9 /* Build configuration list for PBXNativeTarget "BearClawTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				60C023D42F5B6EF800D702F9 /* Debug */,
@@ -560,7 +560,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		60C023D62F5B6EF800D702F9 /* Build configuration list for PBXNativeTarget "iOSUITests" */ = {
+		60C023D62F5B6EF800D702F9 /* Build configuration list for PBXNativeTarget "BearClawUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				60C023D72F5B6EF800D702F9 /* Debug */,

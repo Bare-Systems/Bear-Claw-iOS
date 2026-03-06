@@ -92,7 +92,7 @@ private struct FinanceDashboardView: View {
             List(items, id: \.0) { item in
                 LabeledContent(item.0, value: item.1)
             }
-            .navigationTitle("Kodiak")
+            .navigationTitle("BearClaw")
         }
     }
 }

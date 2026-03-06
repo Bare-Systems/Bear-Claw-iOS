@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct iOS: App {
+struct BearClaw: App {
     var body: some Scene {
         WindowGroup {
             RootTabView()
