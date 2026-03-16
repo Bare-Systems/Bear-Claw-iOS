@@ -6,3 +6,13 @@ DerivedData/
 .swiftpm/configuration/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
+
+
+# Agent Context
+changes/
+AGENTS.md
+PLAN.md
+CLAUDE.md
+.claude/worktrees/
+ROADMAP.md
+deploy/
