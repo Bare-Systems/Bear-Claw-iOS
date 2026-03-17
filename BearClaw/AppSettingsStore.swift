@@ -20,7 +20,7 @@ final class InMemoryAuthTokenStore: AuthTokenStore {
 }
 
 final class KeychainAuthTokenStore: AuthTokenStore {
-    private let service = "com.barelabs.bearclaw"
+    private let service = "com.baresystems.bearclaw"
     private let account = "bearclaw.authToken"
 
     func readToken() -> String? {

@@ -1,6 +1,6 @@
 # BearClaw iOS
 
-The iOS client app for securely interacting with your home-deployed BearClaw agent and integrated Bare Labs (Polar, Koala, Kodiak).
+The iOS client app for securely interacting with your home-deployed BearClaw agent and integrated Bare Systems (Polar, Koala, Kodiak).
 
 Current MVP security behavior:
 - Bearer token persisted in Keychain (not `UserDefaults`).
