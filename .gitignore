@@ -25,3 +25,5 @@ PLAN*.md
 # Deployment symlink
 suite/
 blink/
+.blink/
+blink
