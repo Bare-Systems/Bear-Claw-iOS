@@ -76,6 +76,46 @@ struct ChatMessage: Codable, Identifiable, Equatable, Sendable {
     }
 }
 
+struct GatewayHealth: Codable, Equatable, Sendable {
+    let status: String
+    let service: String
+}
+
+struct RunStreamEvent: Codable, Equatable, Sendable {
+    let type: String
+    let runID: String
+    let userID: String?
+    let deviceID: String?
+    let scopes: String?
+    let timestamp: Int?
+    let tool: String?
+    let arguments: String?
+    let success: Bool?
+    let content: String?
+    let code: String?
+    let message: String?
+
+    enum CodingKeys: String, CodingKey {
+        case type
+        case runID = "run_id"
+        case userID = "user_id"
+        case deviceID = "device_id"
+        case scopes
+        case timestamp = "ts"
+        case tool
+        case arguments
+        case success
+        case content
+        case code
+        case message
+    }
+}
+
+enum ChatStreamUpdate: Equatable, Sendable {
+    case connected(runID: String?)
+    case event(RunStreamEvent)
+}
+
 struct AgentActionRequest: Codable, Equatable, Sendable {
     let action: String
     let arguments: [String: String]

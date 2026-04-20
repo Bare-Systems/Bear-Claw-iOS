@@ -22,6 +22,7 @@ final class InMemoryAuthTokenStore: AuthTokenStore {
 final class KeychainAuthTokenStore: AuthTokenStore {
     private let service = "com.baresystems.bearclaw"
     private let account = "bearclaw.authToken"
+    private let accessibility = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
 
     func readToken() -> String? {
         let query: [String: Any] = [
@@ -48,11 +49,15 @@ final class KeychainAuthTokenStore: AuthTokenStore {
         ]
 
         if let token, let data = token.data(using: .utf8), !token.isEmpty {
-            let attrsToUpdate: [String: Any] = [kSecValueData as String: data]
+            let attrsToUpdate: [String: Any] = [
+                kSecValueData as String: data,
+                kSecAttrAccessible as String: accessibility,
+            ]
             let updateStatus = SecItemUpdate(baseQuery as CFDictionary, attrsToUpdate as CFDictionary)
             if updateStatus == errSecItemNotFound {
                 var addQuery = baseQuery
                 addQuery[kSecValueData as String] = data
+                addQuery[kSecAttrAccessible as String] = accessibility
                 _ = SecItemAdd(addQuery as CFDictionary, nil)
             }
             return
@@ -75,6 +80,11 @@ final class AppSettingsStore: ObservableObject {
         didSet { save() }
     }
 
+    @Published private(set) var pairingStatusMessage: String?
+    @Published private(set) var pairingStatusIsError = false
+    @Published private(set) var lastPairingSource: PairingImportSource?
+    @Published private(set) var lastPairingImportedAt: Date?
+
     private enum Keys {
         static let apiBaseURL = "bearclaw.apiBaseURL"
         static let pinnedCertFingerprint = "bearclaw.pinnedCertFingerprint"
@@ -93,6 +103,28 @@ final class AppSettingsStore: ObservableObject {
 
     var isConfigured: Bool {
         validatedBaseURL != nil
+    }
+
+    var hasAuthToken: Bool {
+        !authToken.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    var hasPinnedCertificate: Bool {
+        normalizeFingerprint(pinnedCertFingerprint).count == 64
+    }
+
+    var tokenStorageDescription: String {
+        "Keychain (This Device Only)"
+    }
+
+    var endpointDisplayValue: String {
+        validatedBaseURL?.absoluteString ?? "Not configured"
+    }
+
+    var fingerprintDisplayValue: String {
+        let normalized = normalizeFingerprint(pinnedCertFingerprint)
+        guard normalized.count == 64 else { return "Missing" }
+        return "\(normalized.prefix(12))...\(normalized.suffix(12))"
     }
 
     func makeClient() -> BearClawClientProtocol {
@@ -116,10 +148,43 @@ final class AppSettingsStore: ObservableObject {
     }
 
     func applyPairingPayload(_ rawPayload: String) throws {
+        try applyPairingPayload(rawPayload, source: .manualPaste)
+    }
+
+    func applyPairingPayload(_ rawPayload: String, source: PairingImportSource) throws {
         let payload = try parseTardiPairingPayload(rawPayload)
+        apply(payload, source: source)
+    }
+
+    func applyPairingURL(_ url: URL) throws {
+        let source: PairingImportSource = url.isFileURL ? .sharedFile : .sharedLink
+        let payload = try parseTardiPairingPayload(from: url)
+        apply(payload, source: source)
+    }
+
+    func applyPairingQRCodeImage(_ data: Data) throws {
+        let payload = try parseTardiPairingPayloadFromQRCodeImageData(data)
+        apply(payload, source: .qrCode)
+    }
+
+    func recordPairingFailure(_ error: Error) {
+        pairingStatusMessage = error.localizedDescription
+        pairingStatusIsError = true
+    }
+
+    func clearPairingStatus() {
+        pairingStatusMessage = nil
+        pairingStatusIsError = false
+    }
+
+    private func apply(_ payload: TardiPairingPayload, source: PairingImportSource) {
         apiBaseURL = payload.endpoint
         authToken = payload.bearerToken
         pinnedCertFingerprint = payload.certSHA256
+        pairingStatusMessage = source.successMessage
+        pairingStatusIsError = false
+        lastPairingSource = source
+        lastPairingImportedAt = Date()
     }
 
     func reset() {

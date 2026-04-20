@@ -1,8 +1,15 @@
 import SwiftUI
 
 struct RootTabView: View {
+    private enum Tab: Hashable {
+        case chat
+        case connection
+        case settings
+    }
+
     @StateObject private var settings: AppSettingsStore
     @StateObject private var chatViewModel: ChatViewModel
+    @State private var selectedTab: Tab = .chat
 
     init(settings: AppSettingsStore? = nil, chatViewModel: ChatViewModel? = nil) {
         let resolvedSettings = settings ?? AppLaunch.makeSettingsStore()
@@ -12,90 +19,37 @@ struct RootTabView: View {
     }
 
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             ChatView(viewModel: chatViewModel, isConfigured: settings.isConfigured)
                 .tabItem {
                     Label("Chat", systemImage: "message")
                 }
+                .tag(Tab.chat)
 
-            WeatherDashboardView()
+            ConnectionStatusView(settings: settings, chatViewModel: chatViewModel)
                 .tabItem {
-                    Label("Weather", systemImage: "cloud.sun")
+                    Label("Connection", systemImage: "antenna.radiowaves.left.and.right")
                 }
-
-            SecurityDashboardView()
-                .tabItem {
-                    Label("Security", systemImage: "lock.shield")
-                }
-
-            FinanceDashboardView()
-                .tabItem {
-                    Label("Finance", systemImage: "chart.line.uptrend.xyaxis")
-                }
+                .tag(Tab.connection)
 
             SettingsView(settings: settings)
                 .tabItem {
                     Label("Settings", systemImage: "gearshape")
                 }
+                .tag(Tab.settings)
+        }
+        .onOpenURL { url in
+            handleIncomingURL(url)
         }
     }
-}
 
-private struct WeatherDashboardView: View {
-    private let metrics: [(String, String)] = [
-        ("Home Temp", "68 F"),
-        ("Humidity", "44%"),
-        ("7-Day Outlook", "Rain Tue, clear weekend")
-    ]
-
-    var body: some View {
-        NavigationStack {
-            List(metrics, id: \.0) { metric in
-                LabeledContent(metric.0, value: metric.1)
-            }
-            .navigationTitle("Polar")
+    private func handleIncomingURL(_ url: URL) {
+        do {
+            try settings.applyPairingURL(url)
+            selectedTab = .connection
+        } catch {
+            settings.recordPairingFailure(error)
+            selectedTab = .settings
         }
     }
-}
-
-private struct SecurityDashboardView: View {
-    private let events = [
-        "Front Door: Locked",
-        "Garage Camera: No motion",
-        "Package Check: No package detected"
-    ]
-
-    var body: some View {
-        NavigationStack {
-            List(events, id: \.self) { event in
-                Text(event)
-            }
-            .navigationTitle("Koala")
-            .toolbar {
-                Button("Lock All") {
-                }
-            }
-        }
-    }
-}
-
-private struct FinanceDashboardView: View {
-    private let items: [(String, String)] = [
-        ("Electric Bill", "+$18 vs last month"),
-        ("Spending", "Within monthly budget"),
-        ("Cash Flow", "Healthy")
-    ]
-
-    var body: some View {
-        NavigationStack {
-            List(items, id: \.0) { item in
-                LabeledContent(item.0, value: item.1)
-            }
-            .navigationTitle("BearClaw")
-        }
-    }
-}
-
-#Preview {
-    RootTabView()
 }

@@ -1,4 +1,38 @@
 import Foundation
+import CoreImage
+
+enum PairingImportSource: String, Equatable, Sendable {
+    case manualPaste
+    case qrCode
+    case sharedLink
+    case sharedFile
+
+    var displayName: String {
+        switch self {
+        case .manualPaste:
+            return "Pasted payload"
+        case .qrCode:
+            return "QR code"
+        case .sharedLink:
+            return "Pairing link"
+        case .sharedFile:
+            return "Shared file"
+        }
+    }
+
+    var successMessage: String {
+        switch self {
+        case .manualPaste:
+            return "Pairing applied from pasted payload."
+        case .qrCode:
+            return "Pairing applied from QR code."
+        case .sharedLink:
+            return "Pairing applied from shared link."
+        case .sharedFile:
+            return "Pairing applied from shared file."
+        }
+    }
+}
 
 struct TardiPairingPayload: Codable, Equatable, Sendable {
     let endpoint: String
@@ -18,6 +52,32 @@ enum TardiPairingError: Error, Equatable {
     case invalidEndpoint
     case invalidToken
     case invalidFingerprint
+    case invalidQRCode
+    case unsupportedImportURL
+    case unreadableImportFile
+}
+
+extension TardiPairingError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .invalidFormat:
+            return "The pairing payload format was not recognized."
+        case .invalidJSON:
+            return "The pairing payload was not valid JSON."
+        case .invalidEndpoint:
+            return "The pairing payload must point to an HTTPS gateway."
+        case .invalidToken:
+            return "The pairing payload did not include a bearer token."
+        case .invalidFingerprint:
+            return "The pairing payload did not include a valid cert fingerprint."
+        case .invalidQRCode:
+            return "No BearClaw pairing QR code was found in that image."
+        case .unsupportedImportURL:
+            return "That shared item is not a supported BearClaw pairing payload."
+        case .unreadableImportFile:
+            return "The shared pairing file could not be read."
+        }
+    }
 }
 
 func parseTardiPairingPayload(_ input: String) throws -> TardiPairingPayload {
@@ -59,6 +119,54 @@ func parseTardiPairingPayload(_ input: String) throws -> TardiPairingPayload {
     )
 }
 
+func parseTardiPairingPayload(from url: URL) throws -> TardiPairingPayload {
+    if let scheme = url.scheme?.lowercased(), scheme == "tardi1" {
+        return try parseTardiPairingPayload(url.absoluteString)
+    }
+
+    guard url.isFileURL else {
+        throw TardiPairingError.unsupportedImportURL
+    }
+
+    let accessed = url.startAccessingSecurityScopedResource()
+    defer {
+        if accessed {
+            url.stopAccessingSecurityScopedResource()
+        }
+    }
+
+    let data: Data
+    do {
+        data = try Data(contentsOf: url)
+    } catch {
+        throw TardiPairingError.unreadableImportFile
+    }
+
+    if let text = String(data: data, encoding: .utf8) {
+        return try parseTardiPairingPayload(text)
+    }
+
+    throw TardiPairingError.unreadableImportFile
+}
+
+func parseTardiPairingPayloadFromQRCodeImageData(_ data: Data) throws -> TardiPairingPayload {
+    guard let ciImage = CIImage(data: data) else {
+        throw TardiPairingError.invalidQRCode
+    }
+
+    let detector = CIDetector(
+        ofType: CIDetectorTypeQRCode,
+        context: nil,
+        options: [CIDetectorAccuracy: CIDetectorAccuracyHigh]
+    )
+    let features = detector?.features(in: ciImage) as? [CIQRCodeFeature] ?? []
+    guard let payloadText = features.first?.messageString, !payloadText.isEmpty else {
+        throw TardiPairingError.invalidQRCode
+    }
+
+    return try parseTardiPairingPayload(payloadText)
+}
+
 func normalizeFingerprint(_ raw: String) -> String {
     let cleaned = raw
         .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -80,4 +188,3 @@ private func decodeBase64URL(_ text: String) -> Data? {
     }
     return Data(base64Encoded: base64)
 }
-

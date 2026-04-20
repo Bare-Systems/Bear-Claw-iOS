@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+import CoreImage
 @testable import BearClaw
 
 @Suite(.serialized)
@@ -86,6 +87,82 @@ struct BearClawTests {
         }
     }
 
+    @Test func bearClawClientStreamsRunEvents() async throws {
+        let responseBody = Data(
+            """
+            event: prompt
+            data: {"type":"prompt","run_id":"run-123","content":"hello"}
+
+            event: model_output
+            data: {"type":"model_output","run_id":"run-123","content":"Hi from stream"}
+
+            event: done
+            data: {"type":"done","run_id":"run-123"}
+
+            """
+            .utf8
+        )
+
+        await MockURLProtocolStore.shared.setHandler { request in
+            #expect(request.httpMethod == "POST")
+            #expect(request.url?.absoluteString == "https://example.com/v1/chat/stream")
+            let response = HTTPURLResponse(
+                url: try #require(request.url),
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: ["X-Run-ID": "run-123", "Content-Type": "text/event-stream"]
+            )!
+            return (response, responseBody)
+        }
+
+        let client = BearClawClient(
+            baseURL: URL(string: "https://example.com")!,
+            session: makeMockSession(),
+            authTokenProvider: { "token-123" }
+        )
+
+        var updates: [ChatStreamUpdate] = []
+        for try await update in client.streamMessage("hello") {
+            updates.append(update)
+        }
+
+        #expect(updates.count == 4)
+        #expect(updates[0] == .connected(runID: "run-123"))
+        guard case let .event(modelOutput) = updates[2] else {
+            Issue.record("Expected model output event")
+            return
+        }
+        #expect(modelOutput.type == "model_output")
+        #expect(modelOutput.content == "Hi from stream")
+    }
+
+    @Test func bearClawClientFetchesGatewayHealth() async throws {
+        let responseBody = Data("""
+        {"status":"ok","service":"bareclaw"}
+        """.utf8)
+
+        await MockURLProtocolStore.shared.setHandler { request in
+            #expect(request.httpMethod == "GET")
+            #expect(request.url?.absoluteString == "https://example.com/health")
+            let response = HTTPURLResponse(
+                url: try #require(request.url),
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            return (response, responseBody)
+        }
+
+        let client = BearClawClient(
+            baseURL: URL(string: "https://example.com")!,
+            session: makeMockSession(),
+            authTokenProvider: { nil }
+        )
+
+        let health = try await client.fetchGatewayHealth()
+        #expect(health == GatewayHealth(status: "ok", service: "bareclaw"))
+    }
+
     @Test func appSettingsStoreRequiresSecureRemoteURL() async throws {
         let suiteName = "BearClawTests-\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!
@@ -102,6 +179,7 @@ struct BearClawTests {
 
         settings.authToken = "secret"
         #expect(tokenStore.readToken() == "secret")
+        #expect(settings.tokenStorageDescription == "Keychain (This Device Only)")
     }
 
     @Test func pairingPayloadJSONParses() throws {
@@ -114,6 +192,21 @@ struct BearClawTests {
         #expect(parsed.certSHA256 == "aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899")
     }
 
+    @Test func pairingPayloadQRCodeParses() throws {
+        let payload = """
+        {"endpoint":"https://203.0.113.44:8069","bearer_token":"tok-value","cert_sha256":"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"}
+        """
+        let qrFilter = CIFilter(name: "CIQRCodeGenerator")!
+        qrFilter.setValue(Data(payload.utf8), forKey: "inputMessage")
+        let qrImage = try #require(qrFilter.outputImage?.transformed(by: .init(scaleX: 12, y: 12)))
+        let context = CIContext()
+        let pngData = try #require(context.pngRepresentation(of: qrImage, format: .RGBA8, colorSpace: CGColorSpaceCreateDeviceRGB()))
+
+        let parsed = try parseTardiPairingPayloadFromQRCodeImageData(pngData)
+        #expect(parsed.endpoint == "https://203.0.113.44:8069")
+        #expect(parsed.bearerToken == "tok-value")
+    }
+
     @Test func appSettingsStoreAppliesPairingPayload() throws {
         let suiteName = "BearClawTests-\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!
@@ -123,13 +216,35 @@ struct BearClawTests {
         let settings = AppSettingsStore(defaults: defaults, tokenStore: tokenStore)
         try settings.applyPairingPayload("""
         {"endpoint":"https://203.0.113.44:8069","bearer_token":"tok-value","cert_sha256":"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"}
-        """)
+        """, source: .manualPaste)
 
         #expect(settings.apiBaseURL == "https://203.0.113.44:8069")
         #expect(settings.authToken == "tok-value")
         #expect(settings.pinnedCertFingerprint == "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef")
         #expect(tokenStore.readToken() == "tok-value")
         #expect(settings.isConfigured)
+        #expect(settings.lastPairingSource == .manualPaste)
+        #expect(settings.pairingStatusMessage == "Pairing applied from pasted payload.")
+    }
+
+    @Test func appSettingsStoreAppliesPairingFileImport() throws {
+        let suiteName = "BearClawTests-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("pairing-\(UUID().uuidString).json")
+        defer { try? FileManager.default.removeItem(at: tempURL) }
+
+        try """
+        {"endpoint":"https://192.0.2.12:8069","bearer_token":"file-token","cert_sha256":"abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"}
+        """.write(to: tempURL, atomically: true, encoding: .utf8)
+
+        let settings = AppSettingsStore(defaults: defaults, tokenStore: InMemoryTokenStore())
+        try settings.applyPairingURL(tempURL)
+
+        #expect(settings.apiBaseURL == "https://192.0.2.12:8069")
+        #expect(settings.authToken == "file-token")
+        #expect(settings.lastPairingSource == .sharedFile)
     }
 
     @Test func appSettingsStoreResetClearsPersistedFields() {

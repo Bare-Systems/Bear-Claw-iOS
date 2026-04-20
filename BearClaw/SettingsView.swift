@@ -1,10 +1,12 @@
 import SwiftUI
+import PhotosUI
+import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @ObservedObject var settings: AppSettingsStore
     @State private var pairingInput = ""
-    @State private var pairingStatus: String?
-    @State private var pairingStatusIsError = false
+    @State private var selectedQRCodeImage: PhotosPickerItem?
+    @State private var showingFileImporter = false
 
     var body: some View {
         NavigationStack {
@@ -30,20 +32,40 @@ struct SettingsView: View {
                         .textInputAutocapitalization(.never)
                         .disableAutocorrection(true)
                         .accessibilityIdentifier("settings.pairingInput")
-                    Button("Import Pairing Payload") {
-                        importPairing()
+
+                    Button("Import Pasted Payload") {
+                        importPastedPayload()
                     }
                     .accessibilityIdentifier("settings.importPairingButton")
-                    if let pairingStatus {
+
+                    PhotosPicker(
+                        selection: $selectedQRCodeImage,
+                        matching: .images,
+                        photoLibrary: .shared()
+                    ) {
+                        Label("Import From QR Image", systemImage: "qrcode.viewfinder")
+                    }
+                    .accessibilityIdentifier("settings.importQRCodeButton")
+
+                    Button("Import Shared File") {
+                        showingFileImporter = true
+                    }
+                    .accessibilityIdentifier("settings.importFileButton")
+
+                    if let pairingStatus = settings.pairingStatusMessage {
                         Text(pairingStatus)
                             .font(.footnote)
-                            .foregroundStyle(pairingStatusIsError ? .red : .green)
+                            .foregroundStyle(settings.pairingStatusIsError ? .red : .green)
                             .accessibilityIdentifier("settings.pairingStatus")
                     }
                 }
 
                 Section("Status") {
-                    LabeledContent("Chat Mode", value: settings.isConfigured ? "Live API" : "Preview")
+                    LabeledContent("Chat Mode", value: settings.isConfigured ? "Live SSE" : "Preview")
+                    LabeledContent("Token Storage", value: settings.tokenStorageDescription)
+                    if let source = settings.lastPairingSource {
+                        LabeledContent("Last Pairing", value: source.displayName)
+                    }
                     if !settings.isConfigured && !settings.apiBaseURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                         Text("Use HTTPS for remote gateways. HTTP is only allowed for localhost.")
                             .font(.footnote)
@@ -54,21 +76,49 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
         }
-    }
-
-    private func importPairing() {
-        do {
-            try settings.applyPairingPayload(pairingInput)
-            pairingStatus = "Pairing applied. Endpoint, token, and cert pin updated."
-            pairingStatusIsError = false
-            pairingInput = ""
-        } catch {
-            pairingStatus = "Invalid pairing payload."
-            pairingStatusIsError = true
+        .fileImporter(
+            isPresented: $showingFileImporter,
+            allowedContentTypes: [.json, .plainText, .text],
+            allowsMultipleSelection: false
+        ) { result in
+            handleFileImport(result)
+        }
+        .onChange(of: selectedQRCodeImage) { _, newItem in
+            guard let newItem else { return }
+            Task { await importQRCodeImage(newItem) }
         }
     }
-}
 
-#Preview {
-    SettingsView(settings: AppSettingsStore())
+    private func importPastedPayload() {
+        do {
+            try settings.applyPairingPayload(pairingInput, source: .manualPaste)
+            pairingInput = ""
+        } catch {
+            settings.recordPairingFailure(error)
+        }
+    }
+
+    private func handleFileImport(_ result: Result<[URL], Error>) {
+        do {
+            let urls = try result.get()
+            guard let url = urls.first else { return }
+            try settings.applyPairingURL(url)
+        } catch {
+            settings.recordPairingFailure(error)
+        }
+    }
+
+    @MainActor
+    private func importQRCodeImage(_ item: PhotosPickerItem) async {
+        defer { selectedQRCodeImage = nil }
+
+        do {
+            guard let data = try await item.loadTransferable(type: Data.self) else {
+                throw TardiPairingError.invalidQRCode
+            }
+            try settings.applyPairingQRCodeImage(data)
+        } catch {
+            settings.recordPairingFailure(error)
+        }
+    }
 }
